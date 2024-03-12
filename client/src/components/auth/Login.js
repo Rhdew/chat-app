@@ -5,23 +5,68 @@ import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
 import { useState } from "react";
-//import axios from "axios";
-//import { useToast } from "@chakra-ui/react";
-//import { useHistory } from "react-router-dom";
+import axios from "axios";
+import { useToast } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 //import { ChatState } from "../../Context/ChatProvider";
 
 const Login = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
-  // const toast = useToast();
+  const toast = useToast();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   // const [loading, setLoading] = useState(false);
-
-  //const history = useHistory();
+  const navigate = useNavigate();
   //const { setUser } = ChatState();
 
-  const submitHandler = () => {};
+  const submitHandler = async () => {
+    if (!email || !password) {
+      toast({
+        title: "fill all the fields",
+        description: "all fields are mandatory",
+        status: "warning",
+        duration: 6000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+
+      const { data } = await axios.post(
+        "/api/user/login",
+        { email, password },
+        config
+      );
+
+      toast({
+        title: "Success",
+        description: "Login Successfull",
+        status: "success",
+        duration: 6000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      sessionStorage.setItem("UserInfo", JSON.stringify(data));
+      navigate("/chats");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something goes wrong",
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
   const loading = () => {};
 
   return (
