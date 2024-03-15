@@ -67,4 +67,31 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, authUser };
+const allGetUsers = asyncHandler(async (req, res) => {
+  console.log("allGetUsers", req);
+  let query = {};
+  if (req.query.search) {
+    const searchString = req.query.search;
+
+    query = {
+      $or: [
+        { username: { $regex: searchString, $options: "i" } },
+        { email: { $regex: searchString, $options: "i" } },
+      ],
+    };
+  }
+  //const users = User.find(query);
+  //res.send(users);
+  User.find(query)
+    .then((users) => {
+      // Send the users in the response
+      res.send(users);
+    })
+    .catch((error) => {
+      // Handle any errors
+      console.error("Error fetching users:", error);
+      res.status(500).send("Internal Server Error");
+    });
+});
+
+module.exports = { registerUser, authUser, allGetUsers };
