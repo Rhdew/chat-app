@@ -63,6 +63,7 @@ const authUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
+    console.log("pass/email does'nt match");
     res.status(400).send("Server : email or password does'nt match");
   }
 });

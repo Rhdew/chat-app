@@ -19,6 +19,8 @@ userSchema.pre("save", async function () {
 });
 
 userSchema.methods.passMatch = async function (givenPass) {
+  console.log("passMatch given pass", givenPass);
+  console.log("passMatch this pass", this.password);
   return await bcrypt.compare(givenPass, this.password);
 };
 
